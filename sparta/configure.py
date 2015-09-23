@@ -9,7 +9,6 @@ class Basic:
     SQLALCHEMY_DATABASE_URI = \
         'mysql+pymysql://{user}:{password}@{host}:{port}/{database}'.format(
             **Z.MYSQL)
-    HOST = '0.0.0.0'
 
 
 class DevConfigure(Basic):
