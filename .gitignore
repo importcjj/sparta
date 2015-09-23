@@ -58,3 +58,7 @@ target/
 
 # Setting
 setting.py
+sparta_config.py
+
+#uwsgi setting
+uwsgi.ini
