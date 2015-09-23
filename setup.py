@@ -10,7 +10,7 @@ setup(
     long_description="douyu statistics backend",
     author="jiaju.chen",
     author_mail="jiaju.chen@ele.me",
-    requirements=[
+    install_requires=[
         'Flask==0.10.1',
         'Flask-RESTful==0.3.4',
         'Flask-SQLAlchemy==2.0'
