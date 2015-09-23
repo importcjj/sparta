@@ -1,2 +1,2 @@
-# spata
+# sparta
 Douyu Statistic Backend
