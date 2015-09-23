@@ -37,9 +37,6 @@ def analyse_one(index=None):
         zb['zbType'] = room[0]
         zb['zbViewers'] = int(room[1])
         zb['percent'] = zb['zbViewers'] / outline['total_viewer'] * 100
-        print zb['zbType']
-        print zb['zbViewers']
-        print zb['percent']
         outline['zbTypes'].append(zb)
 
     return outline
