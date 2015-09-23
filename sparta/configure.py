@@ -3,6 +3,8 @@ try:
     import sparta.sparta_config as Z
 except ImportError:
     import sparta.setting as Z
+import logging
+from logging.handlers import RotatingFileHandler
 
 
 class Basic:
@@ -21,4 +23,7 @@ class ProdConfigure(Basic):
 
 def create_app_with(app, config):
     app.config.from_object(config)
+    filehandler = RotatingFileHandler('log/kratos.log', mode='a')
+    filehandler.setLevel(logging.NOTSET)
+    app.logger.addHandler(filehandler)
     return app
