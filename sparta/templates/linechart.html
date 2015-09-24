@@ -1,0 +1,242 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="static/css/nv.d3.css">
+    <script type="text/javascript" src="static/lib/d3.v2.js"></script>
+    <script type="text/javascript" src="static/lib/fisheye.js"></script>
+    <script type="text/javascript" src="static/lib/nv.d3.js"></script>
+    <script type="text/javascript" src="static/lib/jquery-1.11.1.min.js"></script>
+</head>
+
+<body>
+    <style>
+    body {
+        background: #000000;
+    }
+    
+    .over-view {
+        display: -moz-box;
+        /* Firefox */
+        display: -webkit-box;
+        /* Safari and Chrome */
+        display: box;
+        width: 100%;
+        min-width: 1000px;
+    }
+    
+    #total-viewer-chart {
+        -moz-box-flex: 1.0;
+        /* Firefox */
+        -webkit-box-flex: 1.0;
+        /* Safari 和 Chrome */
+        box-flex: 1.0;
+    }
+    
+    #total-room-chart {
+        -moz-box-flex: 1.0;
+        /* Firefox */
+        -webkit-box-flex: 1.0;
+        /* Safari 和 Chrome */
+        box-flex: 1.0;
+    }
+    
+    #total-viewer-chart svg {
+        height: 400px;
+    }
+    
+    #total-room-chart svg {
+        height: 400px;
+    }
+    
+    #type-chart svg {
+        height: 400px;
+    }
+    </style>
+    <div style="text-align:center;color:#ffffff;">
+        <h1>Sparta <span>DouyuTV统计</span>         </h1>
+    </div>
+    <div class="over-view">
+        <div id="total-viewer-chart">
+            <svg>
+            </svg>
+        </div>
+        <div id="total-room-chart">
+            <svg></svg>
+        </div>
+    </div>
+    <div class="detail">
+        <div id="type-chart">
+            <svg></svg>
+        </div>
+    </div>
+    <script>
+    HOST = 'http://115.28.27.5';
+    var overViewDataHandler = function(data) {
+        var Viewers = [],
+            Rooms = [],
+            sections = data;
+        for (i in sections) {
+            time = sections[i].created_at * 1000;
+            viewer = sections[i].zbViewer;
+            rooms = sections[i].zbRooms;
+            Viewers.push({
+                x: time,
+                y: viewer
+            });
+            Rooms.push({
+                x: time,
+                y: rooms
+            });
+        }
+        return [
+            [{
+                values: Viewers,
+                key: '观看人数',
+                color: '#ff7f0e'
+            }],
+            [{
+                values: Rooms,
+                key: '直播总数',
+                color: '#2ca02c'
+            }]
+        ];
+    };
+    var typeDetailDataHandler = function(data) {
+        var one = [];
+        var two = [];
+        var three = [];
+        for (i in data) {
+            var o = {};
+            var t = {};
+            var tr = {};
+            o.x = data[i].created_at;
+            t.x = data[i].created_at;
+            tr.x = data[i].created_at;
+            o.y = data[i].type[0].percent;
+            t.y = data[i].type[1].percent;
+            tr.y = data[i].type[2].percent;
+            one.push(o);
+            two.push(t);
+            three.push(tr);
+        }
+        return [{
+            key: "英雄联盟",
+            values: one
+        }, {
+            key: "未知",
+            values: two
+        }, {
+            key: "未知",
+            values: three
+        }];
+
+    };
+
+    function flashchart() {
+
+        $.ajax({
+            url: HOST + '/base/sections',
+            async: true,
+            success: function(data) {
+                var overViewData = overViewDataHandler(data);
+                var viewers = overViewData[0];
+                var rooms = overViewData[1];
+                $("#total-viewer-chart svg").empty();
+                // total viewers graph
+                nv.addGraph(function() {
+                    var chart = nv.models.lineChart().useInteractiveGuideline(true);
+                    chart.xAxis
+                        .axisLabel('统计时间')
+                        .tickFormat(function(tickVal) {
+                            return d3.time.format('%X')(new Date(tickVal))
+                        });
+
+                    chart.yAxis
+                        .axisLabel('观看人数')
+                        .tickFormat(function(tickVal) {
+                            return tickVal >= 1000 ? parseInt(tickVal / 10000) + "W" : tickVal;
+                        });
+
+                    d3.select('#total-viewer-chart svg')
+                        .datum(viewers)
+                        .transition().duration(500)
+                        .call(chart);
+
+                    nv.utils.windowResize(chart.update);
+                    return chart;
+                });
+                $("#total-room-chart svg").empty()
+                    // total room graph
+                nv.addGraph(function() {
+                    var chart = nv.models.lineChart().useInteractiveGuideline(true);
+                    chart.xAxis
+                        .axisLabel('统计时间')
+                        .tickFormat(function(d) {
+                            return d3.time.format('%X')(new Date(d))
+                        });
+
+                    chart.yAxis
+                        .axisLabel('房间总数')
+                        .tickFormat(d3.format(',r'));
+
+                    d3.select('#total-room-chart svg')
+                        .datum(rooms)
+                        .transition().duration(500)
+                        .call(chart);
+
+                    nv.utils.windowResize(chart.update);
+                    return chart;
+                });
+            },
+
+            error: function(data) {
+                console.log(data);
+            }
+        });
+
+        $.ajax({
+            url: HOST + '/base/type',
+            success: function(data) {
+                $("#type-chart svg").empty()
+                    // type detail graph
+                nv.addGraph(function() {
+                    var chart = nv.models.multiBarChart();
+
+                    chart.xAxis
+                        .axisLabel('统计时间')
+                        .tickFormat(function(d) {
+                            return d3.time.format('%X')(new Date(d * 1000))
+                        });
+
+                    chart.yAxis
+                        .tickFormat(function(d) {
+                            return d + '%';
+                        });
+
+                    d3.select('#type-chart svg')
+                        .datum(typeDetailDataHandler(data))
+                        .transition().duration(500)
+                        .call(chart);
+
+                    nv.utils.windowResize(chart.update);
+
+                    return chart;
+                });
+            },
+            error: function(data) {
+                console.log('error')
+            }
+        });
+
+
+
+    };
+
+
+    flashchart();
+    window.setInterval(flashchart, 30000);
+    </script>
+</body>
+
+</html>

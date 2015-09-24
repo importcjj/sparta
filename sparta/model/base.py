@@ -14,6 +14,7 @@ class Outline(db.Model):
     zbPlayer = db.Column(db.String(255), default='')
     zbViewer = db.Column(db.Integer, default=0)
     zbType = db.Column(db.String(255), default='')
+    created_at = db.Column(db.DateTime)
 
     @classmethod
     def get_by_index(cls, index):
