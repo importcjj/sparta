@@ -250,6 +250,7 @@
         $.ajax({
             url: HOST + '/base/latest',
             success: function(data) {
+                $.("pie-chart svg").empty();
                 pieData = typeDetailPieDataHandler(data);
                 nv.addGraph(function() {
                     var chart = nv.models.pieChart()
