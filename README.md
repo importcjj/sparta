@@ -1,8 +1,10 @@
 # sparta
-Douyu Statistic Backend
+>Douyu Statistic Backend & Frontend
+
+####This project need to work with crawler [douyu](https://github.com/importcjj/douyu)
 
 
-[Online Preview](http://www.sparta.space)
+*[Online Preview](http://www.sparta.space)*
 ####Total Viewers
 ![](http://nottubed-imagestorage.stor.sinaapp.com/sparta_1.png)
 
