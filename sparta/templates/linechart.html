@@ -15,7 +15,7 @@
         background: #000000;
     }
     
-    .over-view {
+    .div-box {
         display: -moz-box;
         /* Firefox */
         display: -webkit-box;
@@ -25,7 +25,7 @@
         min-width: 1000px;
     }
     
-    #total-viewer-chart {
+    .flex-div-1 {
         -moz-box-flex: 1.0;
         /* Firefox */
         -webkit-box-flex: 1.0;
@@ -33,12 +33,12 @@
         box-flex: 1.0;
     }
     
-    #total-room-chart {
-        -moz-box-flex: 1.0;
+    .flex-div-2 {
+        -moz-box-flex: 2.0;
         /* Firefox */
-        -webkit-box-flex: 1.0;
+        -webkit-box-flex: 2.0;
         /* Safari 和 Chrome */
-        box-flex: 1.0;
+        box-flex: 2.0;
     }
     
     #total-viewer-chart svg {
@@ -52,21 +52,28 @@
     #type-chart svg {
         height: 400px;
     }
+    
+    #pie-chart svg {
+        height: 400px;
+    }
     </style>
     <div style="text-align:center;color:#ffffff;">
         <h1>Sparta <span>DouyuTV统计</span>         </h1>
     </div>
-    <div class="over-view">
-        <div id="total-viewer-chart">
+    <div class="over-view div-box">
+        <div id="total-viewer-chart" class="flex-div-1">
             <svg>
             </svg>
         </div>
-        <div id="total-room-chart">
+        <div id="total-room-chart" class="flex-div-1">
             <svg></svg>
         </div>
     </div>
-    <div class="detail">
-        <div id="type-chart">
+    <div class="div-box">
+        <div id="type-chart" class="flex-div-2">
+            <svg></svg>
+        </div>
+        <div id="pie-chart" class="flex-div-1">
             <svg></svg>
         </div>
     </div>
@@ -130,6 +137,17 @@
             key: "未知",
             values: three
         }];
+
+    };
+
+    var typeDetailPieDataHandler = function(data) {
+        var pieTypes = data.zbTypes.slice(0, 20);
+        return pieTypes.map(function(type, i) {
+            var one_type = {};
+            one_type.label = type.zbType;
+            one_type.value = type.percent;
+            return one_type;
+        });
 
     };
 
@@ -229,7 +247,35 @@
             }
         });
 
+        $.ajax({
+            url: HOST + '/base/latest',
+            success: function(data) {
+                pieData = typeDetailPieDataHandler(data);
+                nv.addGraph(function() {
+                    var chart = nv.models.pieChart()
+                        .x(function(d) {
+                            return d.label
+                        })
+                        .y(function(d) {
+                            return d.value
+                        })
+                        .showLabels(true) //Display pie labels
+                        .labelThreshold(.05) //Configure the minimum slice size for labels to show up
+                        .labelType("percent") //Configure what type of data to show in the label. Can be "key", "value" or "percent"
+                        .donut(true) //Turn on Donut mode. Makes pie chart look tasty!
+                        .donutRatio(0.35) //Configure how big you want the donut hole size to be.
+                    ;
 
+                    d3.select("#pie-chart svg")
+                        .datum(pieData)
+                        .transition().duration(1200)
+                        .call(chart);
+
+                    return chart;
+                });
+            },
+            error: function(data) {}
+        });
 
     };
 
