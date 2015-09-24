@@ -31,3 +31,12 @@ def index():
 @app.errorhandler(404)
 def notfound(error):
     return flask.redirect('/')
+
+
+@app.after_request
+def after(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add(
+        'Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    return response
