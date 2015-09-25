@@ -8,7 +8,7 @@ from sparta.configure import (
     DevConfigure,
     ProdConfigure
 )
-
+from sparta.utils import client_visit_controller
 
 app = create_app_with(
     Flask(__name__),
@@ -31,6 +31,13 @@ def index():
 @app.errorhandler(404)
 def notfound(error):
     return flask.redirect('/')
+
+
+@app.before_request
+def before():
+    client_ip = flask.request.headers.get(
+        'X-Real-Ip', flask.request.remote_addr)
+    client_visit_controller(client_ip)
 
 
 @app.after_request

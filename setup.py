@@ -13,6 +13,8 @@ setup(
     install_requires=[
         'Flask==0.10.1',
         'Flask-RESTful==0.3.4',
-        'Flask-SQLAlchemy==2.0'
+        'Flask-SQLAlchemy==2.0',
+        'hiredis==0.2.0',
+        'redis==2.10.3'
     ]
 )
