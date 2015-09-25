@@ -102,7 +102,7 @@ def outline_section(from_index=None, limit=None):
 
 
 def zbtype_section(from_index=None, limit=None):
-    indexs = _section_judge(from_index, limit=20)
+    indexs = _section_judge(from_index, limit=35)
     sections = []
     for index in indexs:
         index_types = {}
