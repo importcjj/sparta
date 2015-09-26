@@ -13,7 +13,7 @@ class Basic:
 
 
 class DevConfigure(Basic):
-    DEBUG = False
+    DEBUG = True
 
 
 class ProdConfigure(Basic):
