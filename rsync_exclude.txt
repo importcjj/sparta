@@ -58,7 +58,4 @@ target/
 .gitignore
 install.record
 
-# python virtual env
-venv/
-# cenarius env dependant config
-cenarius_config.py
+
