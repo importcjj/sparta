@@ -3,6 +3,7 @@ try:
     import sparta.sparta_config as Z
 except ImportError:
     import sparta.setting as Z
+import logging.config
 
 
 class Basic:
@@ -21,4 +22,6 @@ class ProdConfigure(Basic):
 
 def create_app_with(app, config):
     app.config.from_object(config)
+    if not app.debug:
+        logging.config.dictConfig(Z.LOGGING)
     return app
