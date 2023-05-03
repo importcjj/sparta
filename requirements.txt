@@ -1,7 +1,7 @@
 aniso8601==1.0.0
 ecdsa==0.13
 Fabric==1.10.2
-Flask==0.10.1
+Flask==2.2.5
 Flask-RESTful==0.3.4
 Flask-SQLAlchemy==2.0
 itsdangerous==0.24
